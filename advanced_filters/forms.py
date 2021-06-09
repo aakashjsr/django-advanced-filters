@@ -54,11 +54,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         ("range", _("DateTime Range")),
         ("isnull", _("Is NULL")),
         ("istrue", _("Is TRUE")),
-        ("isfalse", _("Is FALSE")),
-        ("lt", _("Less Than")),
-        ("gt", _("Greater Than")),
-        ("lte", _("Less Than or Equal To")),
-        ("gte", _("Greater Than or Equal To")),
+        ("isfalse", _("Is FALSE"))
     )
 
     FIELD_CHOICES = (
@@ -83,10 +79,11 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         """
         Iterate over passed model fields tuple and update initial choices.
         """
-        return tuple(sorted(
+        choices = ((None, "Please Select"),) + tuple(sorted(
             [(fquery, capfirst(fname)) for fquery, fname in fields.items()],
             key=lambda f: f[1].lower())
         ) + self.FIELD_CHOICES
+        return choices
 
     def _build_query_dict(self, formdata=None):
         """
@@ -97,7 +94,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
             formdata = self.cleaned_data
         key = "{field}__{operator}".format(**formdata)
         if formdata['operator'] == "isnull":
-            return {key: None}
+            return {key: True}
         elif formdata['operator'] == "istrue":
             return {formdata['field']: True}
         elif formdata['operator'] == "isfalse":
@@ -187,6 +184,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         super(AdvancedFilterQueryForm, self).__init__(*args, **kwargs)
         self.FIELD_CHOICES = self._build_field_choices(model_fields)
         self.fields['field'].choices = self.FIELD_CHOICES
+
         if not self.fields['field'].initial:
             self.fields['field'].initial = self.FIELD_CHOICES[0]
 
