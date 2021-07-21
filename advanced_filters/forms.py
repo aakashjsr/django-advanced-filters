@@ -49,7 +49,6 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
     """ Build the query from field, operator and value """
     OPERATORS = (
         ("iexact", _("Equals")),
-        ("icontains", _("Contains")),
         ("iregex", _("One of")),
         ("range", _("DateTime Range")),
         ("isnull", _("Is NULL")),
